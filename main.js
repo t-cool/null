@@ -78,11 +78,11 @@
             uniform float roomTheme;
             varying vec2 vUv;
             varying vec3 vPosition;
-            
+
             float noise(vec2 p) {
                 return fract(sin(dot(p.xy, vec2(12.9898,78.233))) * 43758.5453);
             }
-            
+
             float fbm(vec2 p) {
                 float f = 0.0;
                 f += 0.5000 * noise(p); p = p * 2.01;
@@ -91,290 +91,180 @@
                 f += 0.0625 * noise(p);
                 return f;
             }
-            
-            // ガラスのようなキラキラ光沢アルミニウム効果を作成
-            vec3 createMirrorEffect(vec2 uv, float t, float intensity) {
-                // 非常に明るいアルミニウムベース色（ガラスのような透明感）
-                vec3 glassyAluminum = vec3(0.95, 0.97, 1.0);
-                
-                // ガラスのような屈折効果
-                vec2 refraction = vec2(
-                    sin(uv.x * 40.0 + t * 2.5) * 0.005,
-                    cos(uv.y * 35.0 + t * 2.0) * 0.005
-                );
-                vec2 glossyUV = uv + refraction;
-                
-                // 強力なフレネル効果（ガラス特有）
-                vec2 center = vec2(0.5, 0.5);
-                float distFromCenter = length(uv - center);
-                float glassFresnel = pow(1.0 - dot(normalize(vec3(uv - center, 0.1)), vec3(0, 0, 1)), 3.0);
-                glassFresnel = clamp(glassFresnel, 0.3, 1.0);
-                
-                // 虹色の分散効果（プリズム効果）
-                float dispersion = sin(glossyUV.x * 50.0 + t * 3.0) * cos(glossyUV.y * 45.0 + t * 2.5);
-                vec3 spectrum = vec3(
-                    sin(dispersion * 3.14159 + t) * 0.5 + 0.5,
-                    sin(dispersion * 3.14159 + t + 2.09) * 0.5 + 0.5,
-                    sin(dispersion * 3.14159 + t + 4.19) * 0.5 + 0.5
-                ) * 0.15;
-                
-                // キラキラ効果（スパークル）
-                float sparkle1 = noise(glossyUV * 150.0 + t * 10.0);
-                sparkle1 = pow(max(sparkle1 - 0.8, 0.0) * 5.0, 4.0);
-                
-                float sparkle2 = noise(glossyUV * 120.0 + t * 8.0 + vec2(100.0));
-                sparkle2 = pow(max(sparkle2 - 0.85, 0.0) * 6.67, 6.0);
-                
-                float sparkle3 = noise(glossyUV * 180.0 + t * 12.0 + vec2(200.0));
-                sparkle3 = pow(max(sparkle3 - 0.9, 0.0) * 10.0, 8.0);
-                
-                // 超強力なハイライト（鏡面反射）
-                float specular1 = sin(glossyUV.x * 20.0 + t * 4.0) * cos(glossyUV.y * 18.0 + t * 3.5);
-                specular1 = pow(max(specular1, 0.0), 25.0) * 1.5;
-                
-                float specular2 = cos(glossyUV.x * 12.0 - t * 2.5) * sin(glossyUV.y * 15.0 - t * 2.0);
-                specular2 = pow(max(specular2, 0.0), 20.0) * 1.2;
-                
-                // 動的な光線効果
-                float rayEffect = sin(glossyUV.x * 8.0 + glossyUV.y * 3.0 + t * 5.0);
-                rayEffect = pow(max(rayEffect, 0.0), 30.0) * 0.8;
-                
-                // 環境マッピング風の反射
-                float envMapping = sin(glossyUV.x * 6.0 + t * 0.8) * sin(glossyUV.y * 4.0 + t * 1.2) * 0.1 + 0.98;
-                
-                // すべての効果を合成
-                vec3 finalColor = glassyAluminum * envMapping * glassFresnel;
-                
-                // スペクトラム効果を追加
-                finalColor += spectrum;
-                
-                // キラキラ効果を追加
-                finalColor += vec3(sparkle1 + sparkle2 + sparkle3) * 2.0;
-                
-                // 鏡面反射を追加
-                finalColor += vec3(specular1 + specular2 + rayEffect);
-                
-                // 超高輝度
-                finalColor *= (1.3 + intensity * 0.5);
-                
-                // ガラス特有の色調（わずかに青緑がかった透明感）
-                finalColor.r *= 0.97;
-                finalColor.g *= 1.0;
-                finalColor.b *= 1.03;
-                
-                return clamp(finalColor, 0.0, 1.0);
-            }
-            
-            
+
             void main() {
-                vec2 uv = vUv * 20.0; // 解像度を大幅に上げる
-                float t = time * 0.8 + roomTheme * 15.0; // 速度も少し上げる
-                
+                vec2 uv = vUv * 25.0; // 解像度をさらに上げる
+                float t = time * 1.2 + roomTheme * 20.0; // 速度を上げる
+
+                // より複雑なUV変形
                 vec2 morphedUV = uv + vec2(
-                    sin(uv.y * 6.0 + t) * 0.5 * intensity,
-                    cos(uv.x * 4.0 + t * 2.0) * 0.5 * intensity
+                    sin(uv.y * (8.0 + intensity * 4.0) + t) * 0.8 * intensity,
+                    cos(uv.x * (6.0 + intensity * 3.0) + t * 2.5) * 0.8 * intensity
                 ) + vec2(
-                    sin(uv.x * 8.0 + t * 1.3) * 0.2,
-                    cos(uv.y * 10.0 + t * 0.7) * 0.2
+                    sin(uv.x * 12.0 + t * 1.5) * 0.3,
+                    cos(uv.y * 15.0 + t * 0.9) * 0.3
                 );
-                
+                morphedUV += fbm(uv * 0.5 + t * 0.1) * 2.0 * intensity;
+
                 float pattern1, pattern2, pattern3;
-                
-                // 部屋のテーマによってパターンを変更（催眠渦模様を追加）
+
+                // 部屋のテーマによってパターンを変更（催眠渦模様を強化）
                 if (roomTheme < 1.0) {
-                    // 催眠的な渦模様（画像のような）
-                    vec2 center = vec2(10.0, 10.0);
+                    // 無限に続く迷路のような渦
+                    vec2 center = vec2(12.5, 12.5);
                     float angle = atan(morphedUV.y - center.y, morphedUV.x - center.x);
                     float radius = length(morphedUV - center);
                     
-                    // 催眠渦の基本パターン
-                    float spiral = angle + radius * 0.3 - t * 3.0;
-                    float hypnoticRings = sin(radius * 4.0 - t * 2.0) * 0.5 + 0.5;
-                    float spiralWave = sin(spiral * 8.0) * 0.5 + 0.5;
+                    float spiral = angle * 2.0 + log(radius) * 8.0 - t * 4.0;
+                    float hypnoticRings = sin(radius * 6.0 - t * 2.5) * 0.5 + 0.5;
+                    float spiralWave = sin(spiral * 10.0 + sin(radius * 0.5 + t) * 2.0) * 0.5 + 0.5;
                     
-                    pattern1 = mix(hypnoticRings, spiralWave, sin(t * 0.5) * 0.5 + 0.5);
-                    pattern2 = sin(angle * 12.0 + radius * 2.0 - t * 4.0) * cos(radius * 6.0 + t * 2.5);
+                    pattern1 = mix(hypnoticRings, spiralWave, 0.7);
+                    pattern2 = sin(angle * 18.0 + radius * 3.0 - t * 5.0) * cos(radius * 8.0 + t * 3.0);
+
                 } else if (roomTheme < 2.0) {
-                    // 多重催眠渦
-                    vec2 center1 = vec2(8.0, 8.0);
-                    vec2 center2 = vec2(12.0, 12.0);
+                    // 多中心の無限渦
+                    vec2 center1 = vec2(8.0, 8.0) + vec2(sin(t*0.3)*2.0, cos(t*0.4)*2.0);
+                    vec2 center2 = vec2(17.0, 17.0) - vec2(cos(t*0.5)*2.0, sin(t*0.2)*2.0);
                     
                     float angle1 = atan(morphedUV.y - center1.y, morphedUV.x - center1.x);
                     float radius1 = length(morphedUV - center1);
                     float angle2 = atan(morphedUV.y - center2.y, morphedUV.x - center2.x);
                     float radius2 = length(morphedUV - center2);
                     
-                    float spiral1 = sin(angle1 * 10.0 + radius1 * 3.0 - t * 4.0);
-                    float spiral2 = cos(angle2 * 8.0 - radius2 * 2.5 + t * 3.5);
+                    float spiral1 = sin(angle1 * 12.0 + radius1 * 4.0 - t * 5.0);
+                    float spiral2 = cos(angle2 * 10.0 - radius2 * 3.5 + t * 4.5);
                     
-                    pattern1 = (spiral1 + spiral2) * 0.5;
-                    pattern2 = sin(radius1 * 5.0 - t * 3.0) * cos(radius2 * 4.0 + t * 2.0);
+                    pattern1 = (spiral1 + spiral2) * 0.6;
+                    pattern2 = sin(radius1 * 7.0 - t * 3.5) * cos(radius2 * 5.0 + t * 2.5);
+
                 } else if (roomTheme < 3.0) {
-                    // 高解像度チェッカーボード + 渦
-                    float angle = atan(morphedUV.y - 10.0, morphedUV.x - 10.0);
-                    float radius = length(morphedUV - vec2(10.0));
-                    
-                    pattern1 = step(0.5, mod(morphedUV.x + t + sin(angle * 4.0), 1.0)) * step(0.5, mod(morphedUV.y + t * 1.3, 0.8));
-                    pattern2 = sin(angle * 16.0 + radius * 2.0 - t * 5.0) * step(0.3, mod(radius + t, 1.2));
+                    // グリッド状の迷路 + 渦
+                     vec2 gridUV = fract(morphedUV * 0.5);
+                    float gridPattern = (step(0.1, gridUV.x) - step(0.9, gridUV.x)) * (step(0.1, gridUV.y) - step(0.9, gridUV.y));
+                    gridPattern = 1.0 - gridPattern;
+
+                    float angle = atan(morphedUV.y - 12.5, morphedUV.x - 12.5);
+                    float radius = length(morphedUV - vec2(12.5));
+                    float spiralOverlay = sin(angle * 20.0 + radius * 2.0 - t * 6.0);
+
+                    pattern1 = mix(gridPattern, spiralOverlay, 0.6 + intensity * 0.3);
+                    pattern2 = fbm(morphedUV * 1.2 + t * 0.2) * step(0.4, mod(radius + t, 1.5));
+
                 } else {
-                    // 放射状催眠パターン
-                    vec2 center = vec2(10.0, 10.0);
+                    // 放射状の無限回廊
+                    vec2 center = vec2(12.5, 12.5);
                     float angle = atan(morphedUV.y - center.y, morphedUV.x - center.x);
                     float radius = length(morphedUV - center);
                     
-                    // 放射状の線
-                    float radialLines = sin(angle * 24.0 + t * 2.0) * 0.5 + 0.5;
-                    // 同心円
-                    float concentricCircles = sin(radius * 8.0 - t * 4.0) * 0.5 + 0.5;
-                    // 螺旋
-                    float hypnoSpiral = sin(angle * 6.0 + radius * 1.5 - t * 3.0) * 0.5 + 0.5;
+                    float radialLines = sin(angle * 32.0 + t * 3.0) * 0.5 + 0.5;
+                    float concentricCircles = sin(pow(radius, 1.2) * 10.0 - t * 5.0) * 0.5 + 0.5;
+                    float hypnoSpiral = sin(angle * 8.0 + radius * 2.0 - t * 4.0) * 0.5 + 0.5;
                     
-                    pattern1 = mix(radialLines, concentricCircles, sin(t * 0.3) * 0.5 + 0.5);
-                    pattern2 = mix(hypnoSpiral, fbm(morphedUV * 0.8 + t * 0.1), cos(t * 0.4) * 0.5 + 0.5);
+                    pattern1 = mix(radialLines, concentricCircles, sin(t * 0.5) * 0.5 + 0.5);
+                    pattern2 = mix(hypnoSpiral, fbm(morphedUV * 1.0 + t * 0.2), cos(t * 0.6) * 0.5 + 0.5);
                 }
                 
-                pattern3 = sin(length(morphedUV - vec2(10.0)) * 16.0 - t * 6.0) * cos(length(morphedUV - vec2(5.0)) * 12.0 + t * 4.0);
+                pattern3 = sin(length(morphedUV - vec2(12.5)) * 20.0 - t * 7.0) * cos(length(morphedUV - vec2(2.5)) * 15.0 + t * 5.0);
                 
-                float noisePattern = fbm(morphedUV + t * 0.2) * 2.0 - 1.0;
+                float noisePattern = fbm(morphedUV * 2.0 + t * 0.3) * 2.0 - 1.0;
                 
-                float kaleidoscope = sin(atan(morphedUV.y - 10.0, morphedUV.x - 10.0) * (12.0 + roomTheme * 4.0) + t * 4.0);
-                kaleidoscope *= sin(length(morphedUV - vec2(10.0)) * 8.0 - t * 4.0) * cos(length(morphedUV - vec2(5.0)) * 6.0 + t * 3.0);
+                float kaleidoscope = sin(atan(morphedUV.y - 12.5, morphedUV.x - 12.5) * (16.0 + roomTheme * 5.0) + t * 5.0);
+                kaleidoscope *= sin(length(morphedUV - vec2(12.5)) * 10.0 - t * 5.0) * cos(length(morphedUV - vec2(2.5)) * 8.0 + t * 4.0);
                 
                 float combined = (pattern1 + pattern2 + pattern3 + noisePattern + kaleidoscope) * 0.2;
-                combined = smoothstep(-0.8, 0.8, combined);
+                combined = smoothstep(-1.0, 1.0, combined);
                 
-                // 円形マスクを作成（中心のみサイケデリック、外側は黒）
-                vec2 center = vec2(0.5, 0.5); // テクスチャ座標の中心
-                float radius = 0.4; // 円の半径
-                float distanceFromCenter = length(vUv - center);
-                float circleMask = smoothstep(radius, radius - 0.05, distanceFromCenter); // ソフトエッジ
-                
-                
-                // 部屋テーマによる色の変更（黒を含むサイケデリック）
+                // 色の定義（紫を基調としたサイケデリックなパレット）
                 vec3 color1, color2, color3, color4, color5, color6, color7, color8, color9, color10, color11, color12;
-                
-                if (roomTheme < 1.0) {
-                    // 青・シアン系 + 黒
-                    color1 = vec3(0.0, 0.8, 1.0); color2 = vec3(0.0, 0.0, 0.0); // 黒
-                    color3 = vec3(0.8, 0.2, 1.0); color4 = vec3(0.0, 0.4, 1.0);
-                    color5 = vec3(0.0, 0.0, 0.0); color6 = vec3(0.0, 1.0, 0.8); // 黒
-                    color7 = vec3(0.4, 0.6, 1.0); color8 = vec3(0.0, 0.0, 0.0); // 黒
-                    color9 = vec3(0.6, 0.2, 1.0); color10 = vec3(0.0, 0.9, 1.0);
-                    color11 = vec3(0.0, 0.0, 0.0); color12 = vec3(0.1, 0.7, 1.0); // 黒
-                } else if (roomTheme < 2.0) {
-                    // 赤・マゼンタ系 + 黒
-                    color1 = vec3(1.0, 0.2, 0.2); color2 = vec3(0.0, 0.0, 0.0); // 黒
-                    color3 = vec3(1.0, 0.0, 0.7); color4 = vec3(0.0, 0.0, 0.0); // 黒
-                    color5 = vec3(1.0, 0.5, 0.8); color6 = vec3(1.0, 0.1, 1.0);
-                    color7 = vec3(0.0, 0.0, 0.0); color8 = vec3(1.0, 0.3, 0.9); // 黒
-                    color9 = vec3(1.0, 0.8, 0.4); color10 = vec3(0.0, 0.0, 0.0); // 黒
-                    color11 = vec3(1.0, 0.4, 0.0); color12 = vec3(1.0, 0.2, 0.8);
-                } else if (roomTheme < 3.0) {
-                    // 緑・ライム系 + 黒
-                    color1 = vec3(0.0, 0.0, 0.0); color2 = vec3(0.7, 1.0, 0.0); // 黒
-                    color3 = vec3(0.0, 1.0, 0.7); color4 = vec3(0.0, 0.0, 0.0); // 黒
-                    color5 = vec3(0.6, 1.0, 0.6); color6 = vec3(0.0, 0.0, 0.0); // 黒
-                    color7 = vec3(0.8, 1.0, 0.3); color8 = vec3(0.2, 1.0, 0.8);
-                    color9 = vec3(0.0, 0.0, 0.0); color10 = vec3(0.0, 1.0, 0.5); // 黒
-                    color11 = vec3(0.9, 1.0, 0.1); color12 = vec3(0.0, 0.0, 0.0); // 黒
+
+                if (roomTheme < 2.0) {
+                    // テーマ1 & 2: 深紫、マゼンタ、ダークブルー
+                    color1 = vec3(0.6, 0.1, 0.9); // ディープパープル
+                    color2 = vec3(0.0, 0.0, 0.05); // ほぼ黒
+                    color3 = vec3(1.0, 0.0, 0.8); // マゼンタ
+                    color4 = vec3(0.2, 0.0, 0.4); // ダークバイオレット
+                    color5 = vec3(0.05, 0.0, 0.1); // ほぼ黒
+                    color6 = vec3(0.8, 0.2, 1.0); // ブライトラベンダー
+                    color7 = vec3(0.0, 0.0, 0.0); // 黒
+                    color8 = vec3(0.4, 0.1, 0.7); // ミッドナイトパープル
+                    color9 = vec3(1.0, 0.3, 0.8); // ホットピンク
+                    color10 = vec3(0.0, 0.0, 0.0); // 黒
+                    color11 = vec3(0.5, 0.2, 1.0); // エレクトリックブルー
+                    color12 = vec3(0.1, 0.1, 0.3); // ダークブルー
                 } else {
-                    // レインボー + 黒
-                    color1 = vec3(1.0, 0.0, 1.0); color2 = vec3(0.0, 0.0, 0.0); // 黒
-                    color3 = vec3(0.0, 1.0, 1.0); color4 = vec3(0.0, 0.0, 0.0); // 黒
-                    color5 = vec3(0.5, 0.0, 1.0); color6 = vec3(1.0, 0.0, 0.5);
-                    color7 = vec3(0.0, 0.0, 0.0); color8 = vec3(1.0, 0.8, 0.2); // 黒
-                    color9 = vec3(0.8, 0.2, 1.0); color10 = vec3(0.0, 0.0, 0.0); // 黒
-                    color11 = vec3(1.0, 0.6, 0.8); color12 = vec3(0.0, 0.0, 0.0); // 黒
+                    // テーマ3 & 4: 紫、シアン、黒
+                    color1 = vec3(0.0, 0.0, 0.0); // 黒
+                    color2 = vec3(0.7, 0.0, 1.0); // ヘリオトロープ
+                    color3 = vec3(0.0, 0.8, 1.0); // シアン
+                    color4 = vec3(0.0, 0.0, 0.0); // 黒
+                    color5 = vec3(0.3, 0.1, 0.5); // ダークパープル
+                    color6 = vec3(0.9, 0.4, 1.0); // ライトマゼンタ
+                    color7 = vec3(0.0, 0.0, 0.0); // 黒
+                    color8 = vec3(0.0, 0.5, 0.8); // ダークシアン
+                    color9 = vec3(1.0, 0.1, 0.7); // ショッキングピンク
+                    color10 = vec3(0.0, 0.0, 0.0); // 黒
+                    color11 = vec3(0.6, 0.2, 0.8); // インディゴ
+                    color12 = vec3(0.2, 0.9, 0.9); // ターコイズ
                 }
                 
-                float colorCycle = t * 3.0 + combined * 6.0 + roomTheme * 4.0; // より速い色変化
-                float colorIndex = mod(colorCycle, 12.0); // 12色に拡張
+                float colorCycle = t * 4.0 + combined * 8.0 + roomTheme * 5.0; // 色変化を高速化
+                float colorIndex = mod(colorCycle, 12.0);
                 
                 vec3 finalColor;
-                if (colorIndex < 1.0) {
-                    finalColor = mix(color1, color2, fract(colorIndex));
-                } else if (colorIndex < 2.0) {
-                    finalColor = mix(color2, color3, fract(colorIndex));
-                } else if (colorIndex < 3.0) {
-                    finalColor = mix(color3, color4, fract(colorIndex));
-                } else if (colorIndex < 4.0) {
-                    finalColor = mix(color4, color5, fract(colorIndex));
-                } else if (colorIndex < 5.0) {
-                    finalColor = mix(color5, color6, fract(colorIndex));
-                } else if (colorIndex < 6.0) {
-                    finalColor = mix(color6, color7, fract(colorIndex));
-                } else if (colorIndex < 7.0) {
-                    finalColor = mix(color7, color8, fract(colorIndex));
-                } else if (colorIndex < 8.0) {
-                    finalColor = mix(color8, color9, fract(colorIndex));
-                } else if (colorIndex < 9.0) {
-                    finalColor = mix(color9, color10, fract(colorIndex));
-                } else if (colorIndex < 10.0) {
-                    finalColor = mix(color10, color11, fract(colorIndex));
-                } else if (colorIndex < 11.0) {
-                    finalColor = mix(color11, color12, fract(colorIndex));
-                } else {
-                    finalColor = mix(color12, color1, fract(colorIndex));
-                }
+                if (colorIndex < 1.0) finalColor = mix(color1, color2, fract(colorIndex));
+                else if (colorIndex < 2.0) finalColor = mix(color2, color3, fract(colorIndex));
+                else if (colorIndex < 3.0) finalColor = mix(color3, color4, fract(colorIndex));
+                else if (colorIndex < 4.0) finalColor = mix(color4, color5, fract(colorIndex));
+                else if (colorIndex < 5.0) finalColor = mix(color5, color6, fract(colorIndex));
+                else if (colorIndex < 6.0) finalColor = mix(color6, color7, fract(colorIndex));
+                else if (colorIndex < 7.0) finalColor = mix(color7, color8, fract(colorIndex));
+                else if (colorIndex < 8.0) finalColor = mix(color8, color9, fract(colorIndex));
+                else if (colorIndex < 9.0) finalColor = mix(color9, color10, fract(colorIndex));
+                else if (colorIndex < 10.0) finalColor = mix(color10, color11, fract(colorIndex));
+                else if (colorIndex < 11.0) finalColor = mix(color11, color12, fract(colorIndex));
+                else finalColor = mix(color12, color1, fract(colorIndex));
                 
-                // 黒いベース色（床）の場合は完全に黒を維持
                 if (baseColor.r < 0.01 && baseColor.g < 0.01 && baseColor.b < 0.01) {
-                    // 床は完全に黒
                     finalColor = vec3(0.0, 0.0, 0.0);
                 } else {
-                    // 全面サイケデリック効果
-                    float saturation = 3.0 + intensity * 2.0; // さらに強い彩度
+                    float saturation = 4.0 + intensity * 3.0;
                     vec3 grayScale = vec3(dot(finalColor, vec3(0.299, 0.587, 0.114)));
                     finalColor = mix(grayScale, finalColor, saturation);
                     
-                    // 追加のサイケデリック効果（高解像度）
-                    float wave1 = sin(uv.x * 16.0 + t * 4.0) * sin(uv.y * 12.0 + t * 3.0);
-                    float wave2 = cos(uv.x * 10.0 - t * 3.6) * cos(uv.y * 20.0 + t * 4.6);
-                    float wave3 = sin(uv.x * 8.0 + t * 2.5) * cos(uv.y * 14.0 - t * 3.2);
-                    float extraPsych = (wave1 + wave2 + wave3) * 0.33;
+                    float wave1 = sin(uv.x * 20.0 + t * 5.0) * sin(uv.y * 15.0 + t * 4.0);
+                    float wave2 = cos(uv.x * 12.0 - t * 4.5) * cos(uv.y * 25.0 + t * 5.5);
+                    float extraPsych = (wave1 + wave2) * 0.5;
                     
-                    // 強力なレインボー効果
-                    float rainbow = sin(colorCycle * 0.8 + extraPsych * 2.0) * 0.5 + 0.5;
+                    float rainbow = sin(colorCycle * 1.0 + extraPsych * 2.5) * 0.5 + 0.5;
                     vec3 rainbowColor = vec3(
-                        sin(rainbow * 6.28 * 2.0),
-                        sin(rainbow * 6.28 * 2.0 + 2.09),
-                        sin(rainbow * 6.28 * 2.0 + 4.19)
+                        sin(rainbow * 6.28 * 2.5),
+                        sin(rainbow * 6.28 * 2.5 + 2.09),
+                        sin(rainbow * 6.28 * 2.5 + 4.19)
                     ) * 0.5 + 0.5;
                     
-                    // より強力なサイケデリックカラーミックス
-                    vec3 psychColor1 = vec3(1.0, 0.0, 1.0); // ピュアマゼンタ
-                    vec3 psychColor2 = vec3(0.0, 1.0, 0.0); // ピュア緑
-                    vec3 psychColor3 = vec3(0.0, 0.0, 1.0); // ピュア青
-                    vec3 psychColor4 = vec3(1.0, 1.0, 0.0); // ピュア黄
-                    vec3 psychColor5 = vec3(1.0, 0.0, 0.0); // ピュア赤
-                    vec3 psychColor6 = vec3(0.0, 1.0, 1.0); // ピュアシアン
+                    // 紫系のサイケデリックカラーミックス
+                    vec3 psychColor1 = vec3(1.0, 0.0, 1.0); // マゼンタ
+                    vec3 psychColor2 = vec3(0.5, 0.0, 1.0); // バイオレット
+                    vec3 psychColor3 = vec3(0.0, 0.2, 1.0); // ブルー
+                    vec3 psychColor4 = vec3(1.0, 0.2, 0.6); // ピンク
                     
-                    float psychPhase = combined * 6.0 + t * 1.6;
+                    float psychPhase = combined * 8.0 + t * 2.0;
                     vec3 psychMix1 = mix(
                         mix(psychColor1, psychColor2, sin(psychPhase) * 0.5 + 0.5),
-                        mix(psychColor3, psychColor4, cos(psychPhase * 1.3) * 0.5 + 0.5),
-                        sin(psychPhase * 0.7) * 0.5 + 0.5
-                    );
-                    vec3 psychMix2 = mix(
-                        mix(psychColor5, psychColor6, sin(psychPhase * 1.7) * 0.5 + 0.5),
-                        mix(psychColor1, psychColor3, cos(psychPhase * 0.9) * 0.5 + 0.5),
-                        sin(psychPhase * 1.2) * 0.5 + 0.5
+                        mix(psychColor3, psychColor4, cos(psychPhase * 1.5) * 0.5 + 0.5),
+                        sin(psychPhase * 0.8) * 0.5 + 0.5
                     );
                     
-                    // 全ての色を強力に混合
-                    finalColor = mix(finalColor, rainbowColor, intensity * 0.6 + 0.3);
-                    finalColor = mix(finalColor, psychMix1, 0.4 + intensity * 0.4);
-                    finalColor = mix(finalColor, psychMix2, 0.3 + intensity * 0.3);
-                    finalColor = mix(finalColor, baseColor, 0.02); // ベース色の影響を減らす
+                    finalColor = mix(finalColor, rainbowColor, intensity * 0.7 + 0.2);
+                    finalColor = mix(finalColor, psychMix1, 0.5 + intensity * 0.5);
+                    finalColor = mix(finalColor, baseColor, 0.01);
                     
-                    // 明るさを強化
-                    float brightness = 1.2 + intensity * 1.0 + combined * 0.8;
+                    float brightness = 1.5 + intensity * 1.2 + combined * 1.0;
                     finalColor *= brightness;
                     
-                    // 最低限の明るさを保証（より明るく）
-                    finalColor = max(finalColor, vec3(0.2, 0.2, 0.2));
+                    finalColor = max(finalColor, vec3(0.0, 0.0, 0.05));
                     
-                    // 色の彩度を最大化
                     finalColor = clamp(finalColor, 0.0, 1.0);
                 }
                 
