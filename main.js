@@ -154,13 +154,13 @@
                 // 鏡面反射を追加
                 finalColor += vec3(specular1 + specular2 + rayEffect);
                 
-                // 超高輝度
-                finalColor *= (1.3 + intensity * 0.5);
-                
-                // ガラス特有の色調（わずかに青緑がかった透明感）
-                finalColor.r *= 0.97;
-                finalColor.g *= 1.0;
-                finalColor.b *= 1.03;
+                // 超超高輝度
+                finalColor *= (1.8 + intensity * 0.8);
+
+                // ガラス特有の色調（より鮮やかに）
+                finalColor.r *= 1.05;
+                finalColor.g *= 1.1;
+                finalColor.b *= 1.15;
                 
                 return clamp(finalColor, 0.0, 1.0);
             }
@@ -254,37 +254,37 @@
                 vec3 color1, color2, color3, color4, color5, color6, color7, color8, color9, color10, color11, color12;
                 
                 if (roomTheme < 1.0) {
-                    // 青・シアン系 + 黒
-                    color1 = vec3(0.0, 0.8, 1.0); color2 = vec3(0.0, 0.0, 0.0); // 黒
-                    color3 = vec3(0.8, 0.2, 1.0); color4 = vec3(0.0, 0.4, 1.0);
-                    color5 = vec3(0.0, 0.0, 0.0); color6 = vec3(0.0, 1.0, 0.8); // 黒
-                    color7 = vec3(0.4, 0.6, 1.0); color8 = vec3(0.0, 0.0, 0.0); // 黒
-                    color9 = vec3(0.6, 0.2, 1.0); color10 = vec3(0.0, 0.9, 1.0);
-                    color11 = vec3(0.0, 0.0, 0.0); color12 = vec3(0.1, 0.7, 1.0); // 黒
+                    // 青・シアン系 超鮮やか
+                    color1 = vec3(0.0, 1.0, 1.0); color2 = vec3(1.0, 0.0, 1.0); // シアン→マゼンタ
+                    color3 = vec3(1.0, 0.3, 1.0); color4 = vec3(0.0, 0.6, 1.0);
+                    color5 = vec3(0.0, 1.0, 1.0); color6 = vec3(0.2, 1.0, 0.8); // 明るいシアン
+                    color7 = vec3(0.6, 0.8, 1.0); color8 = vec3(1.0, 0.5, 1.0); // ライトブルー→マゼンタ
+                    color9 = vec3(0.8, 0.3, 1.0); color10 = vec3(0.2, 1.0, 1.0);
+                    color11 = vec3(0.5, 0.5, 1.0); color12 = vec3(0.2, 0.9, 1.0); // ブルー
                 } else if (roomTheme < 2.0) {
-                    // 赤・マゼンタ系 + 黒
-                    color1 = vec3(1.0, 0.2, 0.2); color2 = vec3(0.0, 0.0, 0.0); // 黒
-                    color3 = vec3(1.0, 0.0, 0.7); color4 = vec3(0.0, 0.0, 0.0); // 黒
-                    color5 = vec3(1.0, 0.5, 0.8); color6 = vec3(1.0, 0.1, 1.0);
-                    color7 = vec3(0.0, 0.0, 0.0); color8 = vec3(1.0, 0.3, 0.9); // 黒
-                    color9 = vec3(1.0, 0.8, 0.4); color10 = vec3(0.0, 0.0, 0.0); // 黒
-                    color11 = vec3(1.0, 0.4, 0.0); color12 = vec3(1.0, 0.2, 0.8);
+                    // 赤・マゼンタ系 超鮮やか
+                    color1 = vec3(1.0, 0.3, 0.3); color2 = vec3(1.0, 1.0, 0.0); // レッド→イエロー
+                    color3 = vec3(1.0, 0.0, 0.8); color4 = vec3(1.0, 0.5, 0.0); // マゼンタ→オレンジ
+                    color5 = vec3(1.0, 0.6, 0.9); color6 = vec3(1.0, 0.2, 1.0);
+                    color7 = vec3(1.0, 0.8, 0.0); color8 = vec3(1.0, 0.4, 1.0); // ゴールド→マゼンタ
+                    color9 = vec3(1.0, 0.9, 0.5); color10 = vec3(1.0, 0.0, 0.5); // ライトオレンジ→ピンク
+                    color11 = vec3(1.0, 0.5, 0.2); color12 = vec3(1.0, 0.3, 0.9);
                 } else if (roomTheme < 3.0) {
-                    // 緑・ライム系 + 黒
-                    color1 = vec3(0.0, 0.0, 0.0); color2 = vec3(0.7, 1.0, 0.0); // 黒
-                    color3 = vec3(0.0, 1.0, 0.7); color4 = vec3(0.0, 0.0, 0.0); // 黒
-                    color5 = vec3(0.6, 1.0, 0.6); color6 = vec3(0.0, 0.0, 0.0); // 黒
-                    color7 = vec3(0.8, 1.0, 0.3); color8 = vec3(0.2, 1.0, 0.8);
-                    color9 = vec3(0.0, 0.0, 0.0); color10 = vec3(0.0, 1.0, 0.5); // 黒
-                    color11 = vec3(0.9, 1.0, 0.1); color12 = vec3(0.0, 0.0, 0.0); // 黒
+                    // 緑・ライム系 超鮮やか
+                    color1 = vec3(0.5, 1.0, 0.5); color2 = vec3(0.8, 1.0, 0.0); // ライトグリーン→ライム
+                    color3 = vec3(0.0, 1.0, 0.8); color4 = vec3(1.0, 1.0, 0.3); // ターコイズ→イエロー
+                    color5 = vec3(0.7, 1.0, 0.7); color6 = vec3(0.3, 1.0, 0.3); // 明るい緑
+                    color7 = vec3(0.9, 1.0, 0.4); color8 = vec3(0.3, 1.0, 0.9);
+                    color9 = vec3(0.6, 1.0, 0.0); color10 = vec3(0.0, 1.0, 0.6); // ライム→緑
+                    color11 = vec3(1.0, 1.0, 0.2); color12 = vec3(0.4, 1.0, 0.4); // イエロー→グリーン
                 } else {
-                    // レインボー + 黒
-                    color1 = vec3(1.0, 0.0, 1.0); color2 = vec3(0.0, 0.0, 0.0); // 黒
-                    color3 = vec3(0.0, 1.0, 1.0); color4 = vec3(0.0, 0.0, 0.0); // 黒
-                    color5 = vec3(0.5, 0.0, 1.0); color6 = vec3(1.0, 0.0, 0.5);
-                    color7 = vec3(0.0, 0.0, 0.0); color8 = vec3(1.0, 0.8, 0.2); // 黒
-                    color9 = vec3(0.8, 0.2, 1.0); color10 = vec3(0.0, 0.0, 0.0); // 黒
-                    color11 = vec3(1.0, 0.6, 0.8); color12 = vec3(0.0, 0.0, 0.0); // 黒
+                    // レインボー 超鮮やか
+                    color1 = vec3(1.0, 0.0, 1.0); color2 = vec3(1.0, 0.5, 0.0); // マゼンタ→オレンジ
+                    color3 = vec3(0.0, 1.0, 1.0); color4 = vec3(0.5, 1.0, 0.0); // シアン→ライムグリーン
+                    color5 = vec3(0.6, 0.0, 1.0); color6 = vec3(1.0, 0.0, 0.6);
+                    color7 = vec3(1.0, 1.0, 0.0); color8 = vec3(1.0, 0.9, 0.3); // イエロー→ゴールド
+                    color9 = vec3(0.9, 0.3, 1.0); color10 = vec3(0.0, 0.8, 1.0); // バイオレット→スカイブルー
+                    color11 = vec3(1.0, 0.7, 0.9); color12 = vec3(0.3, 1.0, 0.7); // ピンク→ミント
                 }
                 
                 float colorCycle = t * 3.0 + combined * 6.0 + roomTheme * 4.0; // より速い色変化
@@ -323,7 +323,7 @@
                     finalColor = vec3(0.0, 0.0, 0.0);
                 } else {
                     // 全面サイケデリック効果
-                    float saturation = 3.0 + intensity * 2.0; // さらに強い彩度
+                    float saturation = 5.0 + intensity * 3.0; // 超強い彩度
                     vec3 grayScale = vec3(dot(finalColor, vec3(0.299, 0.587, 0.114)));
                     finalColor = mix(grayScale, finalColor, saturation);
                     
@@ -361,18 +361,18 @@
                         sin(psychPhase * 1.2) * 0.5 + 0.5
                     );
                     
-                    // 全ての色を強力に混合
-                    finalColor = mix(finalColor, rainbowColor, intensity * 0.6 + 0.3);
-                    finalColor = mix(finalColor, psychMix1, 0.4 + intensity * 0.4);
-                    finalColor = mix(finalColor, psychMix2, 0.3 + intensity * 0.3);
-                    finalColor = mix(finalColor, baseColor, 0.02); // ベース色の影響を減らす
+                    // 全ての色を超強力に混合
+                    finalColor = mix(finalColor, rainbowColor, intensity * 0.8 + 0.5);
+                    finalColor = mix(finalColor, psychMix1, 0.6 + intensity * 0.5);
+                    finalColor = mix(finalColor, psychMix2, 0.5 + intensity * 0.4);
+                    finalColor = mix(finalColor, baseColor, 0.01); // ベース色の影響を最小化
                     
-                    // 明るさを強化
-                    float brightness = 1.2 + intensity * 1.0 + combined * 0.8;
+                    // 明るさを超強化
+                    float brightness = 1.5 + intensity * 1.5 + combined * 1.2;
                     finalColor *= brightness;
-                    
-                    // 最低限の明るさを保証（より明るく）
-                    finalColor = max(finalColor, vec3(0.2, 0.2, 0.2));
+
+                    // 最低限の明るさを保証（超明るく）
+                    finalColor = max(finalColor, vec3(0.4, 0.4, 0.4));
                     
                     // 色の彩度を最大化
                     finalColor = clamp(finalColor, 0.0, 1.0);

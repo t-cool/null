@@ -11,40 +11,46 @@ body {
     position: absolute;
     top: 20px;
     left: 20px;
-    color: rgba(255, 255, 255, 0.9);
+    color: #00ffff;
     font-size: 14px;
-    background: rgba(0,0,0,0.7);
+    background: linear-gradient(135deg, rgba(255,0,255,0.3), rgba(0,255,255,0.3));
     padding: 10px 15px;
     border-radius: 5px;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 2px solid rgba(0,255,255,0.8);
+    box-shadow: 0 0 20px rgba(0,255,255,0.5), inset 0 0 20px rgba(255,0,255,0.3);
     z-index: 10;
+    text-shadow: 0 0 10px rgba(0,255,255,0.8);
 }
 #intensity-indicator {
     position: absolute;
     bottom: 20px;
     right: 20px;
-    color: rgba(255, 255, 255, 0.9);
+    color: #ff00ff;
     font-size: 12px;
-    background: rgba(0,0,0,0.7);
+    background: linear-gradient(135deg, rgba(255,0,100,0.3), rgba(255,100,255,0.3));
     padding: 10px 15px;
     border-radius: 5px;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,0,255,0.8);
+    box-shadow: 0 0 20px rgba(255,0,255,0.5), inset 0 0 20px rgba(255,100,255,0.3);
     opacity: 0;
     transition: opacity 0.3s;
+    text-shadow: 0 0 10px rgba(255,0,255,0.8);
 }
 #room-indicator {
     position: absolute;
     bottom: 20px;
     left: 20px;
-    color: rgba(255, 255, 255, 0.9);
+    color: #00ff00;
     font-size: 12px;
-    background: rgba(0,0,0,0.7);
+    background: linear-gradient(135deg, rgba(0,255,100,0.3), rgba(100,255,0,0.3));
     padding: 10px 15px;
     border-radius: 5px;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
+    border: 2px solid rgba(0,255,0,0.8);
+    box-shadow: 0 0 20px rgba(0,255,0,0.5), inset 0 0 20px rgba(100,255,100,0.3);
+    text-shadow: 0 0 10px rgba(0,255,0,0.8);
 }
 canvas {
     display: block;
